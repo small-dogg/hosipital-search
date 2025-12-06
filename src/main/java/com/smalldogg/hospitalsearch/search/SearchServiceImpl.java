@@ -21,7 +21,7 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<AutoCompleteHospitalResult> getAutoCompleteHospitals(GetAutoCompleteHospitalsCommand command) throws IOException {
-        log.debug("입력된 문자열 : {}", command.getKeyword());
+        log.info("입력된 문자열 : {}", command.getKeyword());
         SearchResponse<AutoCompleteHospitalResult> result = esClient.search(s -> s
                 .index("hospitals")
                 .size(10)
