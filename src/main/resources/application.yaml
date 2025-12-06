@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: hospital-search
+config:
+  elasticsearch:
+    scheme: http
+    hostname: jerry.world
+    port: 32200
