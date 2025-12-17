@@ -2,6 +2,7 @@ package com.smalldogg.hospitalsearch.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import com.smalldogg.hospitalsearch.config.annotation.Warmup;
 import com.smalldogg.hospitalsearch.search.command.GetAutoCompleteHospitalsCommand;
 import com.smalldogg.hospitalsearch.search.command.SearchHospitalResultCommand;
 import com.smalldogg.hospitalsearch.search.out.AutoCompleteHospitalResult;
