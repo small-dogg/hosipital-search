@@ -1,10 +1,25 @@
 spring:
   application:
     name: hospital-search
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://jerry.world:32222/hospital_db
+    username: test
+    password: test
   data:
     redis:
       host: jerry.world
       port: 6379
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+      ddl-auto: none
+    open-in-view: false
 config:
   elasticsearch:
     scheme: http
