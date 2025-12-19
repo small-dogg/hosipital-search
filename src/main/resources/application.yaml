@@ -1,6 +1,10 @@
 spring:
   application:
     name: hospital-search
+  data:
+    redis:
+      host: jerry.world
+      port: 6379
 config:
   elasticsearch:
     scheme: http

@@ -28,10 +28,15 @@ dependencies {
     implementation 'co.elastic.clients:elasticsearch-java:8.14.0'
     implementation 'org.elasticsearch.client:elasticsearch-rest-client:8.16.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'org.redisson:redisson-spring-boot-starter:4.0.0'
 
+    implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+//    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-aspectj'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
