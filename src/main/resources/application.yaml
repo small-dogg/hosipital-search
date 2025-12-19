@@ -10,3 +10,10 @@ config:
     scheme: http
     hostname: jerry.world
     port: 32200
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always

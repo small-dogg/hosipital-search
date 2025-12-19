@@ -1,6 +1,7 @@
 package com.smalldogg.hospitalsearch.runner;
 
 import com.smalldogg.hospitalsearch.config.annotation.Warmup;
+import com.smalldogg.hospitalsearch.config.warmup.WarmupState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.boot.ApplicationArguments;
@@ -16,19 +17,26 @@ import java.util.Arrays;
 public class WarmUpApplicationRunner implements ApplicationRunner {
 
     private final ApplicationContext applicationContext;
+    private final WarmupState warmupState;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        String[] beanNames = applicationContext.getBeanDefinitionNames();
+        try {
+            String[] beanNames = applicationContext.getBeanDefinitionNames();
 
-        for (String beanName : beanNames) {
-            Object bean = applicationContext.getBean(beanName);
+            for (String beanName : beanNames) {
+                Object bean = applicationContext.getBean(beanName);
 
-            Class<?> targetClass = AopUtils.getTargetClass(bean);
+                Class<?> targetClass = AopUtils.getTargetClass(bean);
 
-            Arrays.stream(targetClass.getDeclaredMethods())
-                    .filter(method -> method.isAnnotationPresent(Warmup.class))
-                    .forEach(method -> invokeWarmupMethod(bean, method));
+                Arrays.stream(targetClass.getDeclaredMethods())
+                        .filter(method -> method.isAnnotationPresent(Warmup.class))
+                        .forEach(method -> invokeWarmupMethod(bean, method));
+            }
+            warmupState.markUp();
+        }catch (Exception e){
+            warmupState.markDown(e);
+            throw e;
         }
     }
 
@@ -47,4 +55,5 @@ public class WarmUpApplicationRunner implements ApplicationRunner {
             throw new RuntimeException("Warmup method failed: " + method, e);
         }
     }
+
 }
