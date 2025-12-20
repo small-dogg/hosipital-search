@@ -12,7 +12,6 @@ import com.smalldogg.hospitalsearch.search.out.HospitalDetailResult;
 import com.smalldogg.hospitalsearch.search.out.SearchHospitalResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,13 +75,13 @@ public class SearchServiceImpl implements SearchService {
                 .toList();
     }
 
+    @DistributedLock(key="detail")
     @Cacheable(cacheNames = "hospital:detail", key="#encId")
     @Transactional
     @Override
     public HospitalDetailResult getHospitalDetail(String encId) {
         Hospital hospital = hospitalRepository.findById(encId)
                 .orElseThrow(() -> new IllegalArgumentException("병원 없어요"));
-
         return HospitalDetailResult.from(hospital);
     }
 
