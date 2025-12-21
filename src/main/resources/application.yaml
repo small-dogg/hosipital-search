@@ -20,6 +20,11 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
       ddl-auto: none
     open-in-view: false
+redission:
+  singleServerConfig:
+    address: "redis://jerry.world:6379"
+    connectionMinimumIdleSize: 5
+    connectionPoolSize: 20
 config:
   elasticsearch:
     scheme: http

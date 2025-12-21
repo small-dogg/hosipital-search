@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnTransformer;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Entity
@@ -90,5 +91,10 @@ public class HospitalReserve {
     public void markExpired(LocalDateTime now) {
         this.status = HospitalReserveStatus.EXPIRED;
         this.expiredAt = now;
+    }
+
+    public double getJoinedAtToEpoch() {
+        long epochMilli = joinedAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return epochMilli + (Math.abs(ticketId.hashCode()) % 1000) / 1000.0;
     }
 }

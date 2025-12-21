@@ -7,13 +7,14 @@ import com.smalldogg.hospitalsearch.queue.enums.HospitalSlotEventType;
 import com.smalldogg.hospitalsearch.queue.in.ExpireReadyParam;
 import com.smalldogg.hospitalsearch.queue.in.OpenSlotsParam;
 import com.smalldogg.hospitalsearch.queue.in.ReserveHospitalParam;
+import com.smalldogg.hospitalsearch.queue.redis.RedisQueueRepository;
 import lombok.RequiredArgsConstructor;
-import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class HospitalHospitalReserveServiceImpl implements HospitalReserveServic
 
     private final HospitalReserveRepository hospitalReserveRepository;
     private final HospitalSlotEventRepository  hospitalSlotEventRepository;
-    private final RedissonClient redissonClient;
+    private final RedisQueueRepository redisQueueRepository;
 
     /**
      * 대기열에 등록하되, 동일한 인원에 여러번 대기열에 참여할 수 없도록 제한
@@ -57,8 +58,7 @@ public class HospitalHospitalReserveServiceImpl implements HospitalReserveServic
 
         hospitalReserveRepository.save(hospitalReserve);
 
-        //ZSET ADD
-        //ws joined
+        redisQueueRepository.enqueue(hospitalReserve.getEncId(), hospitalReserve.getTicketId(), hospitalReserve.getJoinedAtToEpoch());
 
         return ticketId;
     }
@@ -81,27 +81,24 @@ public class HospitalHospitalReserveServiceImpl implements HospitalReserveServic
 
         hospitalSlotEventRepository.save(event);
 
-        // WAITING 앞에서 slotDelta만큼 선발
-        List<HospitalReserve> waitingList = hospitalReserveRepository.findFrontByStatusForUpdate(
-                param.getEncId(),
-                HospitalReserveStatus.WAITING,
-                PageRequest.of(0, event.getSlotDelta())
-        );
+        // Redis에서 선발
+        List<UUID> promotedTicketIds = redisQueueRepository.popFront(param.getEncId(), param.getSlotDelta());
+        if(promotedTicketIds.isEmpty()) return Collections.emptyList();
 
         LocalDateTime now = LocalDateTime.now();
-        for (HospitalReserve reserve : waitingList) {
-            reserve.markReady(
-                    now,
-                    now.plusMinutes(READY_EXPIRE_MINUTES)
-            );
+
+        LocalDateTime deadline = now.plusMinutes(READY_EXPIRE_MINUTES);
+        for (UUID ticketId : promotedTicketIds) {
+            HospitalReserve hospitalReserve = hospitalReserveRepository.findByEncIdAndTicketId(param.getEncId(), ticketId)
+                    .orElseThrow(() -> new IllegalStateException("티켓이 존재하지 않습니다."));
+
+            if(!HospitalReserveStatus.WAITING.equals(hospitalReserve.getStatus())) {
+                continue;
+            }
+            hospitalReserve.markReady(now, deadline);
         }
 
-        //ZSET에서 ZREM
-        //WS READY 알림
-
-        return waitingList.stream()
-                .map(HospitalReserve::getTicketId)
-                .toList();
+        return promotedTicketIds;
     }
 
     /**

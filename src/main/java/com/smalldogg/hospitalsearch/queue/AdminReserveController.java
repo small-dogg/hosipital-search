@@ -31,7 +31,6 @@ public class AdminReserveController {
 
         if(ticketIds.isEmpty()) return;
 
-        // READY로 바뀐 앞쪽 N명을 찾아 push (TODO: READY를 최근에 만든 걸로 선별하는 개선은 다음 단계)
         for (UUID ticketId : ticketIds) {
             HospitalReserve r = reserveRepository.findByEncIdAndTicketId(encId, ticketId)
                     .orElseThrow();

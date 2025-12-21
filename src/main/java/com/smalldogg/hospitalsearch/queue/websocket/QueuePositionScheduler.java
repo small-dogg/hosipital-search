@@ -4,6 +4,7 @@ import com.smalldogg.hospitalsearch.queue.HospitalReserveRepository;
 import com.smalldogg.hospitalsearch.queue.entity.HospitalReserve;
 import com.smalldogg.hospitalsearch.queue.enums.HospitalReserveStatus;
 import com.smalldogg.hospitalsearch.queue.out.QueueStatusMessage;
+import com.smalldogg.hospitalsearch.queue.redis.RedisQueueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ public class QueuePositionScheduler {
 
     private final QueueSubscriptionRegistry registry;
     private final HospitalReserveRepository reserveRepository;
+    private final RedisQueueRepository redisQueueRepository;
     private final QueuePushSender pushSender;
 
     @Scheduled(fixedDelay = 3000)
@@ -43,8 +45,7 @@ public class QueuePositionScheduler {
         String enterUrl = null;
 
         if (status == HospitalReserveStatus.WAITING) {
-            long ahead = reserveRepository.countWaitingAhead(encId, reserve.getJoinedAt());
-            position = (int) ahead + 1;
+            position = redisQueueRepository.position(encId, reserve.getTicketId());
         }
 
         if (status == HospitalReserveStatus.READY) {
