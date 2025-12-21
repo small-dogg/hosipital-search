@@ -1,4 +1,4 @@
-package com.smalldogg.hospitalsearch.queue.sender;
+package com.smalldogg.hospitalsearch.queue.websocket;
 
 import com.smalldogg.hospitalsearch.queue.out.QueueStatusMessage;
 import lombok.RequiredArgsConstructor;

@@ -3,7 +3,7 @@ package com.smalldogg.hospitalsearch.queue;
 import com.smalldogg.hospitalsearch.queue.entity.HospitalReserve;
 import com.smalldogg.hospitalsearch.queue.in.OpenSlotsParam;
 import com.smalldogg.hospitalsearch.queue.out.QueueStatusMessage;
-import com.smalldogg.hospitalsearch.queue.sender.QueuePushSender;
+import com.smalldogg.hospitalsearch.queue.websocket.QueuePushSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

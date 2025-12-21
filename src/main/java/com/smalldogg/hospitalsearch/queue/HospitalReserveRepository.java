@@ -4,7 +4,10 @@ import com.smalldogg.hospitalsearch.queue.entity.HospitalReserve;
 import com.smalldogg.hospitalsearch.queue.enums.HospitalReserveStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
@@ -65,4 +68,14 @@ public interface HospitalReserveRepository extends JpaRepository<HospitalReserve
                          @Param("fromStatus") HospitalReserveStatus fromStatus,
                          @Param("toStatus") HospitalReserveStatus toStatus,
                          @Param("ticketIds") List<UUID> ticketIds);
+
+    @Query("""
+       select count(r)
+       from HospitalReserve r
+       where r.encId = :encId
+         and r.status = 'WAITING'
+         and r.joinedAt < :joinedAt
+       """)
+    long countWaitingAhead(@Param("encId") String encId,
+                           @Param("joinedAt") LocalDateTime joinedAt);
 }

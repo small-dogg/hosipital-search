@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-@RequestMapping(value = "/hospitals/{encId}")
+@RequestMapping(value = "/hospitals/{encId")
 @Controller
 public class ReserveViewController {
     private final HospitalReserveService hospitalReserveService;
@@ -17,7 +17,7 @@ public class ReserveViewController {
     /**
      * Queue 진입 이전 화면
      */
-    @GetMapping("/queue")
+    @GetMapping("")
     public String queueHome(@PathVariable String encId, Model model) {
         model.addAttribute("encId", encId);
         return "queue-home";
@@ -26,7 +26,7 @@ public class ReserveViewController {
     /**
      * 대기열 합류
      */
-    @PostMapping("/queue/join")
+    @PostMapping("/join")
     public String join(@PathVariable String encId,
                        @CookieValue(name = "SESSION_KEY", required = false) String sessionKey,
                        Model model) {
@@ -44,7 +44,7 @@ public class ReserveViewController {
     /**
      * Queue 대기 화면
      */
-    @GetMapping("/queue/wait")
+    @GetMapping("/wait")
     public String waitPage(@PathVariable String encId,
                            @RequestParam UUID ticketId,
                            @RequestParam(required = false) String sessionKey,
