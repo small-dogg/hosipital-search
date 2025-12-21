@@ -51,7 +51,6 @@ public class SearchServiceImpl implements SearchService {
                 .toList();
     }
 
-//    @DistributedLock(name="get-auto-complete-lock", delay =  5000L)
     @Override
     public List<AutoCompleteHospitalResult> getAutoCompleteHospitals(GetAutoCompleteHospitalsCommand command) throws IOException {
         log.info("입력된 문자열 : {}", command.getKeyword());

@@ -1,0 +1,15 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Queue Home</title>
+</head>
+<body>
+<h2 th:text="'병원 대기열 - encId: ' + ${encId}"></h2>
+
+<form th:action="@{|/hospitals/${encId}/queue/join|}" method="post">
+    <button type="submit">대기열 참여</button>
+</form>
+
+</body>
+</html>
