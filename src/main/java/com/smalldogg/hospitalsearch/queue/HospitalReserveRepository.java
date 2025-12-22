@@ -3,6 +3,7 @@ package com.smalldogg.hospitalsearch.queue;
 import com.smalldogg.hospitalsearch.queue.entity.HospitalReserve;
 import com.smalldogg.hospitalsearch.queue.enums.HospitalReserveStatus;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -78,4 +79,14 @@ public interface HospitalReserveRepository extends JpaRepository<HospitalReserve
        """)
     long countWaitingAhead(@Param("encId") String encId,
                            @Param("joinedAt") LocalDateTime joinedAt);
+
+    @Query("""
+       select r
+       from HospitalReserve r
+       where r.status = 'READY'
+         and r.readyDeadlineAt <= :now
+       order by r.readyDeadlineAt asc
+       """)
+    List<HospitalReserve> findReadyExpiredBatch(@Param("now") LocalDateTime now, Pageable pageable);
+
 }

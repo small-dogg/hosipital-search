@@ -46,4 +46,8 @@ public class RedisQueueRepository {
                 .map(m -> UUID.fromString(m.replace("ticket:", "")))
                 .collect(Collectors.toList());
     }
+
+    public void releaseSlotsAndPromote(String encId, int size) {
+
+    }
 }
